@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "rootDir": "./src",           /* Where your code lives */
+    "outDir": "./dist",           /* Where compiled code goes */
+    "strict": true,               /* Enforce strict typing (The Safety Net) */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"]
+}

@@ -1,0 +1,46 @@
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: url_shortener_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db 
+    networks:
+      - url-shortener-network
+
+  backend:
+    build: ./backend
+    container_name: url_shortener_backend
+    restart: unless-stopped
+    environment:
+      MONGO_URI: mongodb://admin:password@mongo:27017/urlshortener?authSource=admin
+    ports:
+      - "5050:5000"
+    depends_on:
+      - mongo
+    networks:
+      - url-shortener-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: url-shortener-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - url-shortener-network
+
+volumes:
+  mongo-data:
+  redis-data:
+
+networks:
+  url-shortener-network:
+    driver: bridge
