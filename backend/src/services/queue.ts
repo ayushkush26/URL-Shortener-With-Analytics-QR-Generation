@@ -1,6 +1,6 @@
-import {Queue} from 'bullmq';
-import{redis} from '../config/redis';
-export const QUEUE_NAME = 'analytics-queue'; 
+import { Queue } from 'bullmq';
+import { redis } from '../config/redis';
+export const QUEUE_NAME = 'analytics-queue';
 // 🛠️ The Queue Definition
 // This represents the "Mailbox" where we drop our click events.
 export const analyticsQueue = new Queue(QUEUE_NAME, {

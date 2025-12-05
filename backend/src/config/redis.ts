@@ -8,10 +8,12 @@ dotenv.config();
 // This code runs once when the app starts.
 // All other files import this SAME instance.
 
-const redisUrl = process.env.REDIS_URL;
+// Fallback to a local Redis for development when REDIS_URL isn't provided
+const DEFAULT_REDIS = 'redis://127.0.0.1:6379';
+const redisUrl = process.env.REDIS_URL || DEFAULT_REDIS;
 
-if (!redisUrl) {
-  throw new Error('❌ FATAL: REDIS_URL is not defined in .env');
+if (!process.env.REDIS_URL) {
+  console.warn('⚠️ REDIS_URL not set; falling back to', DEFAULT_REDIS);
 }
 
 // 🛠️ The Connection
