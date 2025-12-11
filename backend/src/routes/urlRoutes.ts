@@ -1,14 +1,47 @@
 import express from 'express';
-import { createShortUrl, redirectLink } from '../controllers/urlController';
-import { getUrlAnalytics } from '../controllers/urlController';
+import {
+  createShortUrl,
+  getUrlAnalytics,
+  getQRCode,
+  getUserUrls,
+  deleteShortUrl,
+} from '../controllers/urlController';
+import { createShortUrlLimiter, apiLimiter } from '../middlewares/rateLimiter';
+import { validateUrlBody, validateShortCode } from '../middlewares/validation';
+import { authenticateJWT, optionalJWT } from '../middlewares/auth';
+import { asyncHandler } from '../middlewares/errorHandler';
+
 const router = express.Router();
 
-router.post('/shorten', createShortUrl);
+// Create short URL (rate limited)
+router.post(
+  '/shorten',
+  optionalJWT,
+  createShortUrlLimiter,
+  validateUrlBody,
+  asyncHandler(createShortUrl)
+);
 
-// 🧠 THE REDIRECT ROUTE
-// This usually goes in app.ts or a root router because it's at the root level (linkify.pro/abc)
-// But for now, let's keep it here and mount it correctly.
-router.get('/:shortCode', redirectLink);
-router.get('/analytics/:shortCode', getUrlAnalytics);
+// Get analytics (requires auth for owned URLs)
+router.get(
+  '/analytics/:shortCode',
+  optionalJWT,
+  validateShortCode,
+  asyncHandler(getUrlAnalytics)
+);
+
+// Get QR code
+router.get('/qr/:shortCode', validateShortCode, asyncHandler(getQRCode));
+
+// Get user's URLs (requires auth)
+router.get('/my-urls', authenticateJWT, asyncHandler(getUserUrls));
+
+// Delete URL (requires auth)
+router.delete(
+  '/:shortCode',
+  authenticateJWT,
+  validateShortCode,
+  asyncHandler(deleteShortUrl)
+);
 
 export default router;
