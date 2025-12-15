@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+// Load environment variables as early as possible
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -13,34 +17,35 @@ app.use(express.json());
 app.use('/api/url', urlRoutes);
 app.get('/:shortCode', redirectLink);
 
-connectDB();
-initWorker();
 // 1. Basic Route
 app.get('/', (req, res) => {
     res.send('🚀 Linkify Pro Backend is Running!');
 });
 
 // 2. Test Connections
-async function startServer() {
+// Ensure DB is connected before starting worker and server
+async function main() {
     try {
-        // Test Redis
-        const redis = new Redis(); // connects to localhost:6379 (Docker)
-        await redis.set("test", "Redis is working");
-        console.log("✅ Redis Connected");
+        await connectDB();
 
-        // Test Mongo
-        await mongoose.connect('mongodb://localhost:27017/linkify');
-        console.log("✅ MongoDB Connected");
+        // Start background worker
+        initWorker();
+
+        // Quick Redis connectivity check
+        const redis = new Redis(); // connects to localhost:6379 (Docker)
+        await redis.set('test', 'Redis is working');
+        console.log('✅ Redis Connected');
 
         app.listen(PORT, () => {
             console.log(`🔥 Server running on http://localhost:${PORT}`);
         });
     } catch (error) {
-        console.error("❌ Startup Failed:", error);
+        console.error('❌ Startup Failed:', error);
+        process.exit(1);
     }
 }
 
-startServer();
+main();
 
 
 // import express from 'express';
