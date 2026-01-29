@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+// Load environment variables as early as possible
 dotenv.config();
 
 import express from 'express';
@@ -16,31 +17,37 @@ import { errorHandler, notFoundHandler, asyncHandler } from './middlewares/error
 import { apiLimiter } from './middlewares/rateLimiter';
 
 const app = express();
-const PORT = process.env.PORT || 5001; // default 5000 conflicts with macOS AirPlay
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
-const isDev = process.env.NODE_ENV !== 'production';
+const PORT = 5000;
+app.use(cors());
+app.use(express.json());
+app.use('/api/url', urlRoutes);
+app.get('/:shortCode', redirectLink);
 
-// Allow a few common local dev origins by default
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:5174',
-  'http://127.0.0.1:5174',
-  'http://localhost:4173',
-  'http://127.0.0.1:4173',
-  process.env.FRONTEND_URL,
-].filter(Boolean);
+// 1. Basic Route
+app.get('/', (req, res) => {
+    res.send('🚀 Linkify Pro Backend is Running!');
+});
 
-const corsOptions: CorsOptions = {
-  origin: (origin, callback) => {
-    // In dev, allow all origins to avoid blocking local preview/proxy ports
-    if (isDev) {
-      return callback(null, true);
-    }
+// 2. Test Connections
+// Ensure DB is connected before starting worker and server
+async function main() {
+    try {
+        await connectDB();
 
-    // Allow non-browser / curl requests with no origin
-    if (!origin) {
-      return callback(null, true);
+        // Start background worker
+        initWorker();
+
+        // Quick Redis connectivity check
+        const redis = new Redis(); // connects to localhost:6379 (Docker)
+        await redis.set('test', 'Redis is working');
+        console.log('✅ Redis Connected');
+
+        app.listen(PORT, () => {
+            console.log(`🔥 Server running on http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('❌ Startup Failed:', error);
+        process.exit(1);
     }
 
     if (allowedOrigins.includes(origin)) {
@@ -72,8 +79,7 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('combined'));
 }
 
-// Trust proxy (for accurate IP addresses behind reverse proxy)
-app.set('trust proxy', 1);
+main();
 
 // ==================== HEALTH CHECK ROUTES ====================
 

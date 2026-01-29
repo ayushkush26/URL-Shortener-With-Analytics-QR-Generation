@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IApiKey extends Document {
-    ownerId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId;
     keyId: string;
     secretHash: string;
     scopes: string[];
@@ -13,7 +13,7 @@ export interface IApiKey extends Document {
 
 const apiKeySchema = new Schema<IApiKey>(
     {
-        ownerId: {
+        userId: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: [true, 'User ID is required'],
@@ -54,7 +54,7 @@ const apiKeySchema = new Schema<IApiKey>(
 );
 
 // Index for efficient lookups
-apiKeySchema.index({ ownerId: 1, keyId: 1 });
+apiKeySchema.index({ userId: 1, keyId: 1 });
 apiKeySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const ApiKey = mongoose.model<IApiKey>('ApiKey', apiKeySchema);
