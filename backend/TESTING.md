@@ -31,15 +31,15 @@ Or use the startup scripts:
 ### Health Checks
 ```bash
 # Health check
-curl http://localhost:5000/health
+curl http://localhost:5001/health
 
 # Healthz check
-curl http://localhost:5000/healthz
+curl http://localhost:5001/healthz
 ```
 
 ### Create Short URL
 ```bash
-curl -X POST http://localhost:5000/api/url/shorten \
+curl -X POST http://localhost:5001/api/url/shorten \
   -H "Content-Type: application/json" \
   -d '{"originalUrl": "https://www.google.com"}'
 ```
@@ -47,17 +47,17 @@ curl -X POST http://localhost:5000/api/url/shorten \
 ### Redirect Test
 ```bash
 # Replace {shortCode} with actual short code from create response
-curl -L http://localhost:5000/{shortCode}
+curl -L http://localhost:5001/{shortCode}
 ```
 
 ### Analytics
 ```bash
-curl http://localhost:5000/api/url/analytics/{shortCode}
+curl http://localhost:5001/api/url/analytics/{shortCode}
 ```
 
 ### QR Code
 ```bash
-curl http://localhost:5000/api/url/qr/{shortCode}
+curl http://localhost:5001/api/url/qr/{shortCode}
 ```
 
 ## Automated Testing
@@ -147,7 +147,7 @@ docker restart url-shortener-redis
 ```
 
 ### Backend Not Starting
-1. Check if port 5000 is available
+1. Check if port 5001 is available
 2. Verify environment variables in `.env`
 3. Check TypeScript compilation errors: `npm run build`
 4. Check logs for errors
@@ -163,10 +163,10 @@ docker restart url-shortener-redis
 ### Load Test with Apache Bench
 ```bash
 # Test create endpoint
-ab -n 100 -c 10 -p create.json -T application/json http://localhost:5000/api/url/shorten
+ab -n 100 -c 10 -p create.json -T application/json http://localhost:5001/api/url/shorten
 
 # Test redirect endpoint
-ab -n 1000 -c 50 http://localhost:5000/{shortCode}
+ab -n 1000 -c 50 http://localhost:5001/{shortCode}
 ```
 
 ## Monitoring
@@ -176,7 +176,7 @@ The backend logs will show:
 - ✅ MongoDB Connected
 - ✅ Redis Connected
 - ✅ Analytics Worker Started
-- 🔥 Server running on http://localhost:5000
+- 🔥 Server running on http://localhost:5001
 
 ### Monitor Worker
 Watch for:
@@ -188,9 +188,9 @@ Watch for:
 
 Make sure `.env` file has:
 ```
-PORT=5000
+PORT=5001
 NODE_ENV=development
-BASE_URL=http://localhost:5000
+BASE_URL=http://localhost:5001
 MONGO_URI=mongodb://admin:password@localhost:27017/urlshortener?authSource=admin
 REDIS_URL=redis://localhost:6379
 ```

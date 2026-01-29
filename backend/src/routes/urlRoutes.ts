@@ -5,6 +5,8 @@ import {
   getQRCode,
   getUserUrls,
   deleteShortUrl,
+  toggleLinkVisibility,
+  getPublicUrlInfo
 } from '../controllers/urlController';
 import { createShortUrlLimiter, apiLimiter } from '../middlewares/rateLimiter';
 import { validateUrlBody, validateShortCode } from '../middlewares/validation';
@@ -33,6 +35,11 @@ router.get(
 // Get QR code
 router.get('/qr/:shortCode', validateShortCode, asyncHandler(getQRCode));
 
+// Get Public URL Info (ShortUrl data) - e.g. for Bio Link Viewer
+router.get('/public/:shortCode', validateShortCode, asyncHandler(getPublicUrlInfo));
+
+
+
 // Get user's URLs (requires auth)
 router.get('/my-urls', authenticateJWT, asyncHandler(getUserUrls));
 
@@ -42,6 +49,14 @@ router.delete(
   authenticateJWT,
   validateShortCode,
   asyncHandler(deleteShortUrl)
+);
+
+// Toggle link visibility (requires auth)
+router.patch(
+  '/:shortCode/visibility',
+  authenticateJWT,
+  validateShortCode,
+  asyncHandler(toggleLinkVisibility)
 );
 
 export default router;

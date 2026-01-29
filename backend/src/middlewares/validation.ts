@@ -39,8 +39,8 @@ export const validateShortCode = (
     return;
   }
 
-  // Allow alphanumeric, hyphens, and underscores, 3-20 characters
-  if (!/^[a-zA-Z0-9_-]{3,20}$/.test(shortCode)) {
+  // Allow alphanumeric, hyphens, and underscores, 1-50 characters
+  if (!/^[a-zA-Z0-9_-]{1,50}$/.test(shortCode)) {
     res.status(400).json({ error: 'Invalid short code format' });
     return;
   }

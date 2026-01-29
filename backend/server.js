@@ -9,8 +9,20 @@ const cors = require('cors');
 const app = express();
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Allow both localhost aliases
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
+
+app.options('*', cors());
+
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: false
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -64,7 +76,7 @@ app.use((err, req, res, next) => {
 });
 
 // Read env vars
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/url_shortener_db';
 
 // Connect to MongoDB and start server

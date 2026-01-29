@@ -80,18 +80,18 @@ const processJob = async (job: any) => {
     const geoData = geoip.lookup(ip);
     const geo = geoData
       ? {
-          country: geoData.country || 'Unknown',
-          region: geoData.region || undefined,
-          city: geoData.city || undefined,
-          lat: geoData.ll?.[0] || undefined,
-          lon: geoData.ll?.[1] || undefined,
-        }
+        country: geoData.country || 'Unknown',
+        region: geoData.region || undefined,
+        city: geoData.city || undefined,
+        lat: geoData.ll?.[0] || undefined,
+        lon: geoData.ll?.[1] || undefined,
+      }
       : { country: 'Unknown' };
 
     // Parse device info from user agent
     const agent = useragent.parse(userAgentStr);
     const device = {
-      type: agent.device.family === 'Other' ? 'desktop' : agent.device.family.toLowerCase(),
+      deviceType: agent.device.family === 'Other' ? 'desktop' : agent.device.family.toLowerCase(),
       os: agent.os.family,
       browser: agent.family,
       userAgent: userAgentStr,

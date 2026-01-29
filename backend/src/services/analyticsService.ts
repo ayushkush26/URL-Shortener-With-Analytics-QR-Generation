@@ -56,7 +56,7 @@ export const aggregateDailyAnalytics = async (
   // Aggregate by device type
   const deviceMap = new Map<string, number>();
   clicks.forEach((click) => {
-    const device = click.device?.type || 'Unknown';
+    const device = click.device?.deviceType || 'Unknown';
     deviceMap.set(device, (deviceMap.get(device) || 0) + 1);
   });
   const topDevices = Array.from(deviceMap.entries())

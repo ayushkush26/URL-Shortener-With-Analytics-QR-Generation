@@ -15,6 +15,7 @@ export interface IShortUrl extends Document {
   slug?: string;
   type: string;
   defaultRedirectUrl: string;
+  isPublic: boolean;
   settings: {
     password?: string;
     expiresAt?: Date;
@@ -67,6 +68,11 @@ const ShortUrlSchema = new Schema<IShortUrl>(
       type: String,
       required: true,
     },
+    isPublic: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     settings: {
       password: { type: String, select: false },
       expiresAt: Date,
@@ -88,6 +94,7 @@ const ShortUrlSchema = new Schema<IShortUrl>(
 
 // Indexes for performance
 ShortUrlSchema.index({ ownerId: 1, createdAt: -1 });
+ShortUrlSchema.index({ ownerId: 1, isPublic: 1 });
 ShortUrlSchema.index({ shortCode: 1 });
 ShortUrlSchema.index({ slug: 1 });
 ShortUrlSchema.index({ 'settings.expiresAt': 1 });

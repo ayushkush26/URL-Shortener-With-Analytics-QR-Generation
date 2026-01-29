@@ -94,16 +94,17 @@ export const createShortUrlLimiter = rateLimiter({
 
 export const apiLimiter = rateLimiter({
   windowMs: 60 * 1000, // 1 minute
-  maxRequests: 60,
+  maxRequests: 100,
   message: 'API rate limit exceeded. Please slow down.',
 });
 
 export const authLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  maxRequests: 5,
+  maxRequests: 100,
   keyGenerator: (req) => {
     return `auth:${extractIpAddress(req)}`;
   },
   message: 'Too many authentication attempts. Please try again later.',
 });
 
+ 

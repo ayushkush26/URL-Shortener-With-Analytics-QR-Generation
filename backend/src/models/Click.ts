@@ -14,7 +14,7 @@ export interface IClick extends Document {
     lon?: number;
   };
   device: {
-    type?: string; // mobile, desktop, tablet
+    deviceType?: string; // mobile, desktop, tablet
     os?: string;
     browser?: string;
     userAgent?: string;
@@ -62,7 +62,7 @@ const ClickSchema = new Schema<IClick>(
       lon: Number,
     },
     device: {
-      type: String,
+      deviceType: String,
       os: String,
       browser: String,
       userAgent: String,

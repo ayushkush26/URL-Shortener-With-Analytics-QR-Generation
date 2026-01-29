@@ -1,4 +1,4 @@
-# Linkify Pro - URL Shortener Backend
+# URL Shortener Backend
 
 A powerful, production-ready URL shortener backend with analytics, QR code generation, and comprehensive features.
 
